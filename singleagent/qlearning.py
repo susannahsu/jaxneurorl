@@ -1,5 +1,14 @@
 """
-Recurrent Q-learning.
+Recurrent Q-learning. The Agent's decision at a given time step depends
+on sequences of past observations rather than just the current state.
+
+Standard Q-learning assumes that the environment is fully observable,
+meaning the current state contains all the info necessary to make an
+optimal decision. 
+
+Recurrent Q-learning is useful because in many real-world scenarios, agents
+face partial observability, where the current observation doesn't provide
+complete information about the current state of the environment.
 """
 
 
@@ -40,8 +49,8 @@ def extract_timestep_input(timestep: TimeStep):
       obs=timestep.observation,
       done=timestep.last())
 
-Agent = nn.Module
-Params = flax.core.FrozenDict
+Agent = nn.Module # base class for all NN layers & models in Flax
+Params = flax.core.FrozenDict # immutable dict
 AgentState = flax.struct.PyTreeNode
 RNNInput = vbb.RNNInput
 
@@ -157,6 +166,11 @@ class AgentRNN(nn.Module):
 
     def initialize_carry(self, example_shape: Tuple[int]):
         return self.rnn.initialize_carry(example_shape)
+
+# with a probability ε (epsilon), the agent chooses an action at random (exploration), 
+# and with a probability 1-ε, the agent selects the best-known action according to its 
+# current policy (exploitation). The value of ε is a parameter that can be fixed or 
+# adjusted over time.
 
 class EpsilonGreedy:
     """Epsilon Greedy action selection"""

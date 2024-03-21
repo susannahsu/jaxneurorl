@@ -1,5 +1,33 @@
 """
 Recurrent Q-learning.
+
+Training a recurrent neural network based agent in a RL environment using
+JAX and Flax.
+
+Iterative training process, each iteration consists:
+1. Environment interaction: The agent interacts with the environment based
+on its current policy, gathering experiences (observations, actions, rewards,
+and new states). These experiences are added to the buffer (encapsulated in
+a `Transition` object).
+
+2. Sampling and learning:
+- sequences of experiences are sampled from the buffer.
+- the agent's network is unrolled over these sequences to compute predictions
+and the corresponding loss.
+- "burn-in" period, initial part of the sequence is used only to update the 
+network's state without affecting the loss -> help the RNN to account for the
+temporal context (like giving the agent a quick recap of what happened so far
+without trying to learn anything new from it; temporal context means understanding
+how events are connected over time).
+- compute loss function, taking the entire sequence into account; calculate
+gradients.
+- update network params using the chosen optimizer.
+
+3. Target network updates
+
+4. Logging and eval
+
+5. Adaptations and extensions
 """
 
 
@@ -59,10 +87,12 @@ class RunnerState(NamedTuple):
     rng: jax.random.KeyArray
     buffer_state: Optional[fbx.trajectory_buffer.TrajectoryBufferState] = None
 
+# Converts batched data into a sequence format suitable for processing by RNNs
 def batch_to_sequence(values: jax.Array) -> jax.Array:
     return jax.tree_map(
         lambda x: jnp.transpose(x, axes=(1, 0, *range(2, len(x.shape)))), values)
 
+# mask is a binary array indicating which elem in x should be considered in mean calculation
 def maked_mean(x, mask):
   if len(mask.shape) < len(x.shape):
     nx = len(x.shape)
@@ -95,7 +125,7 @@ class RecurrentLossFn:
 
   network: nn.Module
   discount: float = 0.99
-  tx_pair: rlax.TxPair = rlax.IDENTITY_PAIR
+  tx_pair: rlax.TxPair = rlax.IDENTITY_PAIR # currently no transformation
   burn_in_length: int = None
 
   data_wrapper: flax.struct.PyTreeNode = AcmeBatchData
