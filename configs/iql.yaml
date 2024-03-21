@@ -1,15 +1,18 @@
+# Specifies various parameters and settings for running experiments w/
+# the Independent Q-Learning (IQL) algorithm
+
 # EXPERIMENT PARAMS
-"NUM_SEEDS": 1
-"SEED": 1
+"NUM_SEEDS": 1 # number of random seeds for experiment replication
+"SEED": 1 # seed val to use
 
 # WANDB PARAMS
-"PROJECT": "overcooked"
+"PROJECT": "overcooked" # WandB (Weights & Biases) is a tool for experiment tracking
 
-"ALG_NAME": 'iql'
+"ALG_NAME": 'iql' 
 
 # RUN PARAMS
-"NUM_ENVS": 32
-"NUM_STEPS": 256
+"NUM_ENVS": 32 # num of parallel environments
+"NUM_STEPS": 256 # num of steps per env before updating
 "TOTAL_TIMESTEPS": 10e7
 "VERBOSE": FALSE
 "WANDB_ONLINE_REPORT": TRUE
@@ -18,26 +21,27 @@
 "LEARNER_LOG_PERIOD": 50_000  # every this number of learner updates
 
 # NEURAL NET PARAMS
-"AGENT_HIDDEN_DIM": 64
-"AGENT_INIT_SCALE": 2.
+"AGENT_HIDDEN_DIM": 64 # dim of hidden layers in agent's NN
+"AGENT_INIT_SCALE": 2. # initial scale for weights
 "PARAMETERS_SHARING": FALSE
 
 # ALGO PARAMS
-"BUFFER_SIZE": 5000
-"BUFFER_BATCH_SIZE": 32
+"BUFFER_SIZE": 5000 # size of experience replay buffer
+"BUFFER_BATCH_SIZE": 32 # batch size for sampling from the buffer
 
-"EPSILON_START": 1.0
-"EPSILON_FINISH": 0.1
-"EPSILON_ANNEAL_TIME": 1e6
-"MAX_GRAD_NORM": 10
-"TARGET_UPDATE_INTERVAL": 200 
-"LR": 0.005
+"EPSILON_START": 1.0 # for epsilon-greedy exploration strategy
+"EPSILON_FINISH": 0.1 # for epsilon-greedy exploration strategy
+"EPSILON_ANNEAL_TIME": 1e6 # for epsilon-greedy exploration strategy
+"MAX_GRAD_NORM": 10 # max gradient norm for clipping
+"TARGET_UPDATE_INTERVAL": 200 # interval for updating the target network
+"LR": 0.005 # learning rate
 "LR_LINEAR_DECAY": FALSE
 "EPS_ADAM": 0.00001
 "TD_LAMBDA_LOSS": TRUE
 "TD_LAMBDA": 0.6
-"GAMMA": 0.99
+"GAMMA": 0.99 # discount facor for future rewards
 
+# Hydra is a framework used for configuring complex applications
 hydra/output_subdir: null
 hydra/hydra_logging: disabled
 hydra/job_logging: disabled
